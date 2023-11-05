@@ -31,7 +31,7 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    // bookServer 
+    // Bookserver
     const BookDataCollection = client.db('cartDB').collection('cart')
 
     app.post('/books', async (req, res) => {
@@ -40,10 +40,16 @@ async function run() {
         res.send(result)
 
     })
-    // 
+    // get all the books 
     app.get('/books', async (req, res) => {
         const cursor = BookDataCollection.find()
         const result = await  cursor.toArray()
+        res.send(result)
+    })
+    // get the book according to the category 
+    app.get('/books/:id', async(req,res)=>{
+        const id = req.params.id
+        const result = await BookDataCollection.find({Category: id}).toArray()
         res.send(result)
     })
 
