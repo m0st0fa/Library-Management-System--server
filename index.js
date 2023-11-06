@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = "mongodb+srv://Library024:NoifoBZmF7tNeWzs@mostofa.3njni9a.mongodb.net/?retryWrites=true&w=majority";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -51,6 +51,13 @@ async function run() {
         const id = req.params.id
         const result = await BookDataCollection.find({Category: id}).toArray()
         res.send(result)
+    })
+    // Show Details of Book
+    app.get('/details/:id', async(req,res)=>{
+      const id = req.params.id
+      const query = {_id: new ObjectId(id)}
+      const result = await BookDataCollection.findOne(query)
+      res.send(result)
     })
 
     // Send a ping to confirm a successful connection
