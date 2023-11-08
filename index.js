@@ -33,7 +33,7 @@ async function run() {
     await client.connect();
     // this is Book Borrowed server database
 
-    const BorrowedBookCollection = client.db('BorrowedDB').collection('Book')
+    const BorrowedBookCollection = client.db('BorrowedBookDataBae').collection('BorrowedBook')
     app.post('/Borrowed', async (req, res) => {
       const newBorrowedBook = req.body
       // console.log(newBorrowedBook)
@@ -57,7 +57,6 @@ async function run() {
       const result = await BookDataCollection.updateOne(query, updateDocument, options);
       res.send(result);
     });
-    
 
     app.get('/update/:id', async (req, res) => {
       const id = req.params.id;
@@ -65,11 +64,27 @@ async function run() {
       const result = await BookDataCollection.findOne(query);
       res.send(result);
     });
-    // Return Borrowed book 
-    
+    //  this is return borrowed book
+    app.put('/return/:id', async (req, res) => {
+      const id = req.params.id
+      const returnBookQuantity = req.body.Quantity
+      const query = { _id: new ObjectId(id) }
+      const options = { upsert: true }
+      const ReturnDoc = { $set: { Quantity: returnBookQuantity } }
+      const result = await BookDataCollection.updateOne(query, options, ReturnDoc)
+      res.send(result)
+    })
+
+    app.get('/return/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      const result = await BookDataCollection.findOne(query)
+      res.send(result)
+    })
 
 
-    // Bookserver
+
+    // This is Book server 
     const BookDataCollection = client.db('cartDB').collection('cart')
 
     app.post('/books', async (req, res) => {
@@ -95,6 +110,27 @@ async function run() {
       const id = req.params.id
       const query = { _id: new ObjectId(id) }
       const result = await BookDataCollection.findOne(query)
+      res.send(result)
+    })
+    // book update 
+    app.put('update/:id', async (req, res) => {
+      const id = req.params.id
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
+      const updateBook = req.body
+      const book = {
+        $set:
+        {
+          name: book.name,
+          image: book.image,
+          Author: book.Author,
+          Quantity: book.Quantity,
+          rating: book.rating,
+          Category: book.Category,
+          description: book.description
+        }
+      }
+      const result = await BookDataCollection.updateOne(filter,book,options)
       res.send(result)
     })
 
