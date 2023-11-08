@@ -64,26 +64,17 @@ async function run() {
       const result = await BookDataCollection.findOne(query);
       res.send(result);
     });
+
     //  this is return borrowed book
-    app.put('/return/:id', async (req, res) => {
-      const id = req.params.id
-      const returnBookQuantity = req.body.Quantity
-      const query = { _id: new ObjectId(id) }
-      const options = { upsert: true }
-      const ReturnDoc = { $set: { Quantity: returnBookQuantity } }
-      const result = await BookDataCollection.updateOne(query, options, ReturnDoc)
+    app.delete('/delete/:_id', async (req, res) => {
+      const _id = req.params.id
+      const filter = { id: _id }
+      const result = await BorrowedBookCollection.deleteOne(filter)
       res.send(result)
-    })
+  })
+    
 
-    app.get('/return/:id', async (req, res) => {
-      const id = req.params.id
-      const query = { _id: new ObjectId(id) }
-      const result = await BookDataCollection.findOne(query)
-      res.send(result)
-    })
-
-
-
+    
     // This is Book server 
     const BookDataCollection = client.db('cartDB').collection('cart')
 
